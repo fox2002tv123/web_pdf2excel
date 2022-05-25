@@ -96,11 +96,11 @@ def run(data):
     # 改变列的顺序
     alist=['DWP保修单号','保修单号','车架号','对账单序列号','对账单日期','1','2','3','4','5','总计']
     # todo 写入excel
-    # df[alist].to_excel(f'{res_number}DATE{res_date}{s}.xlsx',index=False)
-    # df[alist].to_html(f'{res_number}DATE{res_date}{s}.html',index=False)
-    # df[alist].to_csv(f'{res_number}DATE{res_date}{s}.csv',index=False)
-    # return df[alist].to_json(f'{res_number}DATE{res_date}{s}.json',orient='records')
-    # df[alist].to_clipboard(excel=True,index=False)
-    return df.head(3)
-
+    # 修改列的名字
+    df1=df.copy()
+    new_columns=['DWP','CLAIM','VIN','NO','DATE','1','2','3','4','5','TOTAL']
+    df1.rename(columns=dict(zip(alist,new_columns)),inplace=True)
+    df1[new_columns].head()
+    res=df1[new_columns].to_csv(index=False)
+    return res_number,res_date,s,res # 返回对账单序列号和对账单日期
     # return df.head()

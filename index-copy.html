@@ -2,7 +2,7 @@
  * @Author: bob
  * @Date: 2022-05-25 10:09:23
  * @LastEditors: bob
- * @LastEditTime: 2022-05-25 13:30:47
+ * @LastEditTime: 2022-05-25 15:58:11
  * @FilePath: \web_pdf2excel\index-copy.html
  * @Description: 
  * 
@@ -18,24 +18,25 @@
     <title>PyScript DOM 交互copy</title>
     <!-- 使用本地链接 -->
 
-    <link rel="stylesheet" href="css/pyscript1.css" />
-    <script defer src="js/pyscript1.js"></script>
+    <!-- <link rel="stylesheet" href="css/pyscript1.css" />
+    <script defer src="js/pyscript1.js"></script> -->
 
     <!-- CDN链接 -->
 
-    <!-- <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
-    <script defer src="https://pyscript.net/alpha/pyscript.js"></script> -->
+    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- <py-env>
+    <py-env>
 - numpy
 - pandas
 - xlrd
 - lxml
+- openpyxl
 - paths:
     - data.txt
     - unit.py
-    </py-env> -->
+    </py-env>
 
 </head>
 <body class="bg-gray-700">
@@ -49,7 +50,8 @@
         <div>
             <input pys-onClick="show" id="display" class="cursor-pointer text-white bg-green-600 rounded-md py-2 px-8 " type="button" value="显示">
             <!-- <input onclick="download('data.txt')" id="download" class="cursor-pointer text-white bg-blue-600 rounded-md py-2 px-8" type="button" value="下载"> -->
-            <input onclick="downloadData(fileName,s)" id="download" class="cursor-pointer text-white bg-blue-600 rounded-md py-2 px-8" type="button" value="下载">
+            <!-- <input onclick="downloadData(fileName,s)" id="download" class="cursor-pointer text-white bg-blue-600 rounded-md py-2 px-8" type="button" value="下载"> -->
+            <input pys-onClick="downloadPython" id="download" class="cursor-pointer text-white bg-blue-600 rounded-md py-2 px-8" type="button" value="下载">
             
             <input pys-onClick="clear" id="clear" class="cursor-pointer text-white bg-red-600 rounded-md py-2 px-8" type="button" value="清空">
         </div>
@@ -82,7 +84,7 @@
                 document.body.appendChild(element);
                 element.click();
                 document.body.removeChild(element);
-                alert("下载成功"+ text)
+                alert(text)
             }
             // 下载文件函数-备用1
             function downloadFile(fileName, content){
@@ -106,34 +108,48 @@
             };
         </script>
     </div>
-    <py-script >
+    <!-- <py-script output="output">
 import js
 def show():
-    js.alert(js.document.getElementById("message").value)
+    print("show")
 
-from pyodide import to_js
-obj={'a':4,'b':5}
+# from pyodide import to_js
+# obj={'a':4,'b':5}
 # js.put_object(to_js(obj))
 s1='999,999,999'
 
-    </py-script>
+    </py-script> -->
 
-<!-- <py-script>
-# 优特编程 ：欢迎关注、点赞、转发、评论
+<py-script>
 
+import js
 txt_message = Element("message") # 创建一个文本框
 container = Element("output") # 容器
-# from unit import run
+from unit import run
 
 def clear(*args, **kwargs): # 清空
     txt_message.clear() # 清空文本框
 
 
 def show(*args, **kwargs): # 显示
-    container.write('运行中请稍后') # 等待文本...
-    # res=run(txt_message.value) # 运行
-    # container.write(res) # 输出文本框的长度
+    global res_list
+    js.alert('运行中...')
+    # container.write('运行中请稍后') # 等待文本...
+    res_list=run(txt_message.value) # 运行
+    # container.write('ok') # 输出文本框的长度
+    js.alert('运行完成')
+
+# 默认值
+fileName = 'data.csv'
+s='123,456'
+
+def downloadPython(*args, **kwargs): # 下载
+    fileName = f'{res_list[0]}DATE{res_list[1]}{res_list[2]}.csv'
+    s=res_list[3]
+    print("downloadPython")
+    js.downloadData(fileName,s)
     
-</py-script> -->
+
+</py-script>
 </body>
 </html>
