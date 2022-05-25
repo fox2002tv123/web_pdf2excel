@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PyScript DOM 交互</title>
+    <!-- 使用本地链接 -->
+
+    <link rel="stylesheet" href="css/pyscript.css" />
+    <script defer src="js/pyscript.js"></script>
+
+    <!-- CDN链接 -->
+
+    <!-- <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script> -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <py-env>
+- numpy
+- pandas
+- xlrd
+- lxml
+- paths:
+    - data.txt
+    - unit.py
+    </py-env>
+</head>
+<body class="bg-gray-700">
+    <div class="container bg-white my-10 p-5 max-w-2xl center rounded-md shadow-md">
+        <h1 class="text-2xl">PyScript DOM 交互</h1>
+
+        <textarea class="w-full border-solid border-2 my-4 rounded-md" name="message" id="message" cols="30" rows="10"></textarea>
+
+        <div id="output"></div>
+        
+        <div>
+            <input pys-onClick="show" id="display" class="cursor-pointer text-white bg-green-600 rounded-md py-2 px-8" type="button" value="显示">
+            <input pys-onClick="clear" id="clear" class="cursor-pointer text-white bg-red-600 rounded-md py-2 px-8" type="button" value="清空">
+        </div>
+    </div>
+<py-script>
+# 优特编程 ：欢迎关注、点赞、转发、评论
+
+txt_message = Element("message") # 创建一个文本框
+container = Element("output") # 容器
+from unit import run
+
+def clear(*args, **kwargs): # 清空
+    txt_message.clear() # 清空文本框
+
+
+def show(*args, **kwargs): # 显示
+    container.write('运行中请稍后') # 等待文本...
+    res=run(txt_message.value) # 运行
+    container.write(res) # 输出文本框的长度
+    
+</py-script>
+</body>
+</html>
