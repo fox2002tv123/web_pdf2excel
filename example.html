@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  
+<head>
+  <title>Button Event Proxy</title>
+  <!-- <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+  <script defer src="https://pyscript.net/alpha/pyscript.js"></script> -->
+  <link rel="stylesheet" href="css/pyscript1.css" />
+  <script defer src="js/pyscript1.js"></script>
+
+  <style>
+  .button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+</style>
+</head>
+  
+<body>
+  <p>This example shows how to process a button event</p>
+  <br />
+  <div id="msg">Loading page, please wait ...</div>
+   
+  <br />
+  <button class="button" type="button" id="button">Click Me</button>
+
+  <br />
+  <br />
+  <div id="msg">
+
+  <py-script>
+from js import document
+from pyodide import create_proxy
+
+count = 0
+
+def button_click(event):
+	global count
+
+	count += 1
+
+	document.getElementById("msg").innerHTML = 'Button Clicked ' + str(count)
+
+def setup():
+	# The page is ready, clear the "page loading"
+	document.getElementById("msg").innerHTML = ''
+
+	# Create a JsProxy for the callback function
+	click_proxy = create_proxy(button_click)
+
+	# Set the listener to the callback
+	e = document.getElementById("button")
+	e.addEventListener("click", click_proxy)
+
+setup()
+
+  </py-script>
+</body>
+</html>
