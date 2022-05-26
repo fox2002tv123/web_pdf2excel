@@ -1,0 +1,150 @@
+<!--
+ * @Author: bob
+ * @Date: 2022-05-25 10:09:23
+ * @LastEditors: bob
+ * @LastEditTime: 2022-05-26 13:26:33
+ * @FilePath: \任务22-开发网络版对账单转换工具\正式环境\index.html
+ * @Description: 最终版本,可以使用
+ * 
+ * Copyright (c) 2022 by bob, All Rights Reserved. 
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pyScript-对账单转换</title>
+    <!-- 使用本地链接 -->
+
+    <!-- <link rel="stylesheet" href="css/pyscript1.css" />
+    <script defer src="js/pyscript1.js"></script> -->
+
+    <!-- CDN链接 -->
+
+    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <py-env>
+- numpy
+- pandas
+- xlrd
+- lxml
+- openpyxl
+- paths:
+    - data.txt
+    - unit.py
+    </py-env>
+
+</head>
+<body class="bg-gray-700">
+    <div class="container bg-white my-10 p-5 max-w-2xl center rounded-md shadow-md">
+        <h1 class="text-2xl">PyScript 对账单转换 交互</h1>
+
+        <textarea class="w-full border-solid border-2 my-4 rounded-md" name="message" id="message" cols="30" rows="10"></textarea>
+
+        <div id="output"></div>
+        
+        <div>
+            <input pys-onClick="show" id="display" class="cursor-pointer text-white bg-green-600 rounded-md py-2 px-8 " type="button" value="转换">
+            <input pys-onClick="downloadPython" id="download" class="cursor-pointer text-white bg-blue-600 rounded-md py-2 px-8" type="button" value="下载">
+            <input pys-onClick="clear" id="clear" class="cursor-pointer text-white bg-red-600 rounded-md py-2 px-8" type="button" value="清空">
+        </div>
+        <script>
+            
+            function put_object(obj) {
+                //document.getElementById("output").innerHTML = obj.a;
+                for (var [key,val] of obj){
+                    console.log("key: "+key,"value: "+val);
+                }
+            }
+
+
+
+
+            // 下载文件函数
+            
+            //var s = document.getElementById("message").value
+            var s = '123,456'
+            
+            // var s = pyodide.globals.get('s1').tojs() // 获取python中的变量
+            //var s = pyodide.version // 获取python中的变量
+            var fileName = 'data1.txt'
+            
+            function downloadData(filename, text) {
+                var element = document.createElement('a');
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+                element.setAttribute('download', filename);
+                element.style.display = 'none';
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+                alert(text)
+            }
+            // 下载文件函数-备用1
+            function downloadFile(fileName, content){
+                var aLink = document.createElement('a');
+                var blob = new Blob([content]);
+                var evt = document.createEvent("HTMLEvents");
+                evt.initEvent("click", false, false);//initEvent 不加后两个参数在FF下会报错
+                aLink.download = fileName;
+                aLink.href = URL.createObjectURL(blob);
+                aLink.dispatchEvent(evt);
+            }
+            // 下载函数2-通过路径下载-备用2
+            function download(src) {
+                var $a = document.createElement('a');
+                $a.setAttribute("href", src);
+                $a.setAttribute("download", "");
+            
+                var evObj = document.createEvent('MouseEvents');
+                evObj.initMouseEvent( 'click', true, true, window, 0, 0, 0, 0, 0, false, false, true, false, 0, null);
+                $a.dispatchEvent(evObj);
+            };
+        </script>
+    </div>
+
+<py-script>
+
+import js
+txt_message = Element("message") # 创建一个文本框
+container = Element("output") # 容器
+from unit import run
+
+def clear(*args, **kwargs): # 清空
+    txt_message.clear() # 清空文本框
+
+
+def show(*args, **kwargs): # 显示
+    global res_list
+    
+    if txt_message.value == '':
+        js.alert('请输入数据')
+        return
+    elif 'Credit Note Number' in txt_message.value:
+        js.alert('运行中请稍后...') # 等待文本...
+        res_list=run(txt_message.value) # 运行
+        # container.write('ok') # 输出文本框的长度
+        js.alert('运行完成')
+    else:
+        js.alert('请输入正确的数据')
+        return
+# 默认值
+fileName = 'data.csv'
+s='123,456'
+
+def downloadPython(*args, **kwargs): # 下载
+    try:
+        fileName = f'{res_list[0]}DATE{res_list[1]}{res_list[2]}.csv'
+        s=res_list[3]
+        print("downloadPython")
+        js.downloadData(fileName,s)
+    except:
+        js.alert('请先转换数据')
+        return
+
+</py-script>
+</body>
+</html>
