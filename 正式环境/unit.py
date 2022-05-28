@@ -96,11 +96,98 @@ def run(data):
     # 改变列的顺序
     alist=['DWP保修单号','保修单号','车架号','对账单序列号','对账单日期','1','2','3','4','5','总计']
     # todo 写入excel
-    # 修改列的名字
-    df1=df.copy()
+    
+    ###
+    # 0.re提取每个特征-生成段落
+    import re
+    detail_list=re.findall(r'[^_]+',data)[:-1]
+    detail_list.__len__()
+    detail_list[0]
+    
+    # 1是否有零件特征
+    detail_part=[]
+    for i in detail_list:
+        if re.findall(r'\d{10} \S{11}',i): # 判断是否有零件特征
+            detail_part.append(True)
+        else:
+            detail_part.append(False)
+    detail_part
+    detail_part.__len__()
+    
+    # 2是否有工时特征
+    detail_FRU=[]
+    for i in detail_list:
+        if re.findall(r'\d{10} \S{7}',i): # 判断是否有工时特征
+            detail_FRU.append(True)
+        else:
+            detail_FRU.append(False)
+    detail_FRU
+    detail_FRU.__len__()
+    
+    # 3是否有辅料特征
+    detail_sublit=[]
+    for i in detail_list:
+        if re.findall(r'\d{10} \S{1} ',i): # 判断是否有辅料特征
+            detail_sublit.append(True)
+        else:
+            detail_sublit.append(False)
+    # detail_sublit
+    detail_sublit.__len__()
+    
+    # 4是否有 处理费 特征
+    detail_handcost=[]
+    for i in detail_list:
+        if re.findall(r'\d{9}[^6] \S{11}',i): # DC最后一位不能是6
+            detail_handcost.append(True)
+        else:
+            detail_handcost.append(False)
+    # detail_handcost
+    detail_handcost.__len__()
+    
+    # 5是否有 税费 特征-都有
+    detail_tax=[]
+    for i in detail_list:
+            detail_tax.append(True)
+    detail_tax
+    detail_tax.__len__()
+    
+        # 6是否有 合计特征-都有
+    detail_total=[]
+    for i in detail_list:
+            detail_total.append(True)
+    detail_total
+    detail_total.__len__()
+    
+    # 7形成一个dataframe
+    df_detail=pd.DataFrame({'detail_part':detail_part,'detail_FRU':detail_FRU,'detail_sublit':detail_sublit,'detail_handcost':detail_handcost,'detail_tax':detail_tax,'detail_total':detail_total})
+    df_detail.head()
+    
+    # 8通过true false 填入数据
+    import numpy as np
+    df_detail_res=df_detail.copy()
+    df_value=df.loc[:,'1':'6']
+    df_value.head()
+    for i in range(df_value.shape[0]):
+        k=0
+        for j in range(df_value.shape[1]):
+            if df_detail.iloc[i,j]:
+                df_detail_res.iloc[i,j]=df_value.iloc[i,k]
+                k+=1
+            else:
+                df_detail_res.iloc[i,j]=np.nan    
+
+    df_detail_res.head()
+    
+    # 9 df和df_detail_res合并 axis=1
+    df_res=pd.concat([df,df_detail_res],axis=1)
+    df_res.head()
+    
+    ###
+    df1=df_res.copy()
     new_columns=['DWP','CLAIM','VIN','NO','DATE','1','2','3','4','5','TOTAL']
     df1.rename(columns=dict(zip(alist,new_columns)),inplace=True)
     df1[new_columns].head()
-    res=df1[new_columns].to_csv(index=False)
+    collect_list=['DWP','CLAIM','VIN','NO','DATE','detail_part','detail_FRU','detail_sublit','detail_handcost','detail_tax','TOTAL']
+    res=df1[collect_list].to_csv(index=False)
     return res_number,res_date,s,res # 返回对账单序列号和对账单日期
     # return df.head()
