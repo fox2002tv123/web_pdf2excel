@@ -107,7 +107,7 @@ def run(data):
     # 1是否有零件特征
     detail_part=[]
     for i in detail_list:
-        if re.findall(r'\d{10} \S{11}',i): # 判断是否有零件特征
+        if re.findall(r'\d{10} \S{11} ',i): # 判断是否有零件特征-添加了空格边界
             detail_part.append(True)
         else:
             detail_part.append(False)
@@ -117,7 +117,7 @@ def run(data):
     # 2是否有工时特征
     detail_FRU=[]
     for i in detail_list:
-        if re.findall(r'\d{10} \S{7}',i): # 判断是否有工时特征
+        if re.findall(r'\d{10} \S{7} ',i): # 判断是否有工时特征--添加了空格边界
             detail_FRU.append(True)
         else:
             detail_FRU.append(False)
@@ -127,7 +127,7 @@ def run(data):
     # 3是否有辅料特征
     detail_sublit=[]
     for i in detail_list:
-        if re.findall(r'\d{10} \S{1} ',i): # 判断是否有辅料特征
+        if re.findall(r'\d{10} \S{1} ',i): # 判断是否有辅料特征--添加了空格边界
             detail_sublit.append(True)
         else:
             detail_sublit.append(False)
@@ -137,7 +137,7 @@ def run(data):
     # 4是否有 处理费 特征
     detail_handcost=[]
     for i in detail_list:
-        if re.findall(r'\d{9}[^6] \S{11}',i): # DC最后一位不能是6
+        if re.findall(r'\d{9}[^6] \S{11} ',i): # DC最后一位不能是6--添加了空格边界
             detail_handcost.append(True)
         else:
             detail_handcost.append(False)
