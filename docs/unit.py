@@ -136,8 +136,8 @@ def run(data):
     
     # 4是否有 处理费 特征
     detail_handcost=[]
-    for i in detail_list:
-        if re.findall(r'\d{9}[^6] \S{11} ',i): # DC最后一位不能是6--添加了空格边界
+    for i in detail_list: # 如果召回00开头的,也会有处理费特征
+        if re.findall(r'\d{9}[^6] \S{11} ',i) or re.findall(r'00\d{6}86 \S{11} ',i): # DC最后一位不能是6--添加了空格边界
             detail_handcost.append(True)
         else:
             detail_handcost.append(False)
